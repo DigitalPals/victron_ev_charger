@@ -45,7 +45,7 @@ def calculate_best_hours(xml_data, charge_duration):
     # Find the start time of the charge period with the lowest total price
     min_price_index = total_prices.index(min(total_prices))
     start_time = times_prices[min_price_index][0]
-    end_time = times_prices[min_price_index + charge_duration - 1][0]
+    end_time = times_prices[min_price_index + charge_duration][0]
 
     return start_time, end_time
 
