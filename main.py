@@ -3,7 +3,7 @@ import time
 import logging
 import sys
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from config import FILENAME, UPDATE_INTERVAL, START_STOP_CHARGE_ADDRESS, modbus_client, CHARGE_HOURS, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM
 from utils import fetch_new_data, calculate_best_hours
 from dateutil.parser import parse
@@ -71,7 +71,21 @@ def main():
     start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S")
     end_time_str = end_time.strftime("%Y-%m-%d %H:%M:%S")
 
-    output = f"Charging will start at {start_time_str} and stop at {end_time_str}"
+    # Assuming start_time and end_time are datetime objects
+    start_time_str = start_time.strftime("%H:%M")
+    end_time_str = end_time.strftime("%H:%M")
+
+    # Get the current time
+    now = datetime.now(timezone.utc)
+
+    # Determine if charging starts today or tomorrow
+    if start_time > now:
+        start_day = "today"
+    else:
+        start_day = "tomorrow"
+
+    output = f"Charging will start {start_day} at {start_time_str} and stop at {end_time_str}"
+    send_telegram_notification(output) #send Telegram notification
     print(output)
 
     while True:
@@ -79,9 +93,6 @@ def main():
             # Read the current value of START_STOP_CHARGE_ADDRESS at startup
             current_value = modbus_client.read_holding_registers(START_STOP_CHARGE_ADDRESS, 1)
             print(f"Current value of START_STOP_CHARGE_ADDRESS: {current_value.registers[0]}")
-
-            # Telegram Status
-            send_telegram_notification('Victron EV Charger automation started.')
 
             # Calculate sleep duration until start time and sleep
             sleep_duration = calculate_sleep_duration(start_time)
