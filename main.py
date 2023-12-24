@@ -32,6 +32,7 @@ def send_telegram_notification(message):
     """
 
     if not TELEGRAM:
+        logging.info('Telegram notifications are disabled.')
         return
     
     bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
