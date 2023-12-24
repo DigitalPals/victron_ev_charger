@@ -44,8 +44,11 @@ def main():
     start_time = parse(start_time)
     end_time = parse(end_time)
 
-    output = f"START:{start_time} STOP:{end_time}"
+    # Format start_time and end_time as strings
+    start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S")
+    end_time_str = end_time.strftime("%Y-%m-%d %H:%M:%S")
 
+    output = f"Charging will start at {start_time_str} and stop at {end_time_str}"
     print(output)
 
     while True:
