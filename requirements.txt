@@ -1,3 +1,2 @@
 entsoe-py
-openai
 lxml
