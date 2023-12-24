@@ -11,7 +11,7 @@ COUNTRY = os.getenv('COUNTRY', config.get('DEFAULT', 'COUNTRY'))
 FILENAME = os.getenv('FILENAME', config.get('DEFAULT', 'FILENAME'))
 UPDATE_INTERVAL = int(os.getenv('UPDATE_INTERVAL', config.get('DEFAULT', 'UPDATE_INTERVAL')))
 TIMEZONE = os.getenv('TIMEZONE', config.get('DEFAULT', 'TIMEZONE', fallback='Europe/Amsterdam'))
-CHARGE_HOURS = int(os.getenv('CHARGE_HOURS', config.get('DEFAULT', 'CHARGE_HOURS', fallback='4')))
+CHARGE_HOURS = int(os.getenv('CHARGE_HOURS', config.get('DEFAULT', 'CHARGE_HOURS', fallback='4')).split('#')[0])
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', config.get('DEFAULT', 'TELEGRAM_BOT_TOKEN'))
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', config.get('DEFAULT', 'TELEGRAM_CHAT_ID'))
 TELEGRAM = os.getenv('TELEGRAM', config.get('DEFAULT', 'TELEGRAM')).lower() == 'true'
