@@ -32,6 +32,7 @@ def send_telegram_notification(message):
     """
 
     if not TELEGRAM:
+        print('Telegram notifications are disabled.')
         logging.info('Telegram notifications are disabled.')
         return
     
