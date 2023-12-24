@@ -17,7 +17,7 @@ TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', config.get('DEFAULT', 'TELEGRAM
 TELEGRAM = os.getenv('TELEGRAM', config.get('DEFAULT', 'TELEGRAM')).lower() == 'true'
 
 # Modbus setup
-MODBUS_HOST = os.getenv('MODBUS_HOST', config.get('DEFAULT', 'MODBUS_HOST'))
+MODBUS_HOST = os.getenv('MODBUS_HOST', config.get('DEFAULT', 'MODBUS_HOST')).split('#')[0].strip()
 MODBUS_PORT = int(os.getenv('MODBUS_PORT', config.get('DEFAULT', 'MODBUS_PORT', fallback='502')))
 START_STOP_CHARGE_ADDRESS = int(os.getenv('START_CHARGE_ADDRESS', config.get('DEFAULT', 'START_CHARGE_ADDRESS', fallback='5010')))
 
