@@ -88,10 +88,6 @@ def main():
 
     while True:
         try:
-            # Read the current value of START_STOP_CHARGE_ADDRESS at startup
-            current_value = modbus_client.read_holding_registers(START_STOP_CHARGE_ADDRESS, 1)
-            print(f"Current value of START_STOP_CHARGE_ADDRESS: {current_value.registers[0]}")
-
             # Calculate sleep duration until start time and sleep
             sleep_duration = calculate_sleep_duration(start_time)
             time.sleep(sleep_duration)
