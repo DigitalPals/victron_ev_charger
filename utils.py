@@ -2,7 +2,7 @@ import logging
 import xml.etree.ElementTree as ET
 import pandas as pd
 import pytz
-from config import CHARGE_HOURS, TIMEZONE, entsoe_client, COUNTRY
+from config import CHARGE_HOURS, TIMEZONE, entsoe_client, COUNTRY, FILENAME
 
 def calculate_best_hours(xml_data, charge_duration):
     """
