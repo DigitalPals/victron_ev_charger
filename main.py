@@ -100,6 +100,7 @@ def main():
 
             # Start charging
             send_modbus_command(START_STOP_CHARGE_ADDRESS, 1)
+            send_telegram_notification('Charging started') #send Telegram notification
 
             # Calculate sleep duration until end time and sleep
             sleep_duration = calculate_sleep_duration(end_time)
@@ -107,6 +108,7 @@ def main():
 
             # Stop charging
             send_modbus_command(START_STOP_CHARGE_ADDRESS, 0)
+            send_telegram_notification('Charging ended') #send Telegram notification
 
         except KeyboardInterrupt:
             print("Program stopped by user.")
