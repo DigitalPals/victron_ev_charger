@@ -1,3 +1,4 @@
 entsoe-py
 lxml
 pymodbus
+requests

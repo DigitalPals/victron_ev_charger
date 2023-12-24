@@ -2,8 +2,9 @@ import os
 import time
 import logging
 import sys
+import requests
 from datetime import datetime, timedelta
-from config import FILENAME, UPDATE_INTERVAL, START_STOP_CHARGE_ADDRESS, modbus_client, CHARGE_HOURS
+from config import FILENAME, UPDATE_INTERVAL, START_STOP_CHARGE_ADDRESS, modbus_client, CHARGE_HOURS, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM
 from utils import fetch_new_data, calculate_best_hours
 from dateutil.parser import parse
 
@@ -21,6 +22,28 @@ def calculate_sleep_duration(target_time):
     if future < now:
         future += timedelta(days=1)
     return (future - now).total_seconds()
+
+def send_telegram_notification(message):
+    """
+    Send a message to a specific Telegram chat.
+
+    Args:
+    message (str): The message to send.
+    """
+
+    if not TELEGRAM:
+        return
+    
+    bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
+    chat_id = os.getenv('TELEGRAM_CHAT_ID')
+
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    data = {
+        "chat_id": chat_id,
+        "text": message
+    }
+    response = requests.post(url, data=data)
+    return response.json()
 
 def main():
     try:
@@ -53,6 +76,13 @@ def main():
 
     while True:
         try:
+            # Read the current value of START_STOP_CHARGE_ADDRESS at startup
+            current_value = modbus_client.read_holding_registers(START_STOP_CHARGE_ADDRESS, 1)
+            print(f"Current value of START_STOP_CHARGE_ADDRESS: {current_value.registers[0]}")
+
+            # Telegram Status
+            send_telegram_notification('Victron EV Charger automation started.')
+
             # Calculate sleep duration until start time and sleep
             sleep_duration = calculate_sleep_duration(start_time)
             time.sleep(sleep_duration)
