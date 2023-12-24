@@ -79,10 +79,10 @@ def main():
     now = datetime.now(timezone.utc)
 
     # Determine if charging starts today or tomorrow
-    if start_time > now:
-        start_day = "today"
-    else:
+    if start_time.date() > now.date():
         start_day = "tomorrow"
+    else:
+        start_day = "today"
 
     output = f"Charging will start {start_day} at {start_time_str} and stop at {end_time_str}"
     send_telegram_notification(output) #send Telegram notification
