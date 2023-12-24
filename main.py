@@ -32,16 +32,12 @@ def send_telegram_notification(message):
     """
 
     if not TELEGRAM:
-        print('Telegram notifications are disabled.')
         logging.info('Telegram notifications are disabled.')
         return
     
-    bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-    chat_id = os.getenv('TELEGRAM_CHAT_ID')
-
-    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     data = {
-        "chat_id": chat_id,
+        "chat_id": TELEGRAM_CHAT_ID,
         "text": message
     }
     response = requests.post(url, data=data)
