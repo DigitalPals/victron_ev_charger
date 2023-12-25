@@ -28,6 +28,10 @@ MODBUS_HOST = os.getenv('MODBUS_HOST', config.get('DEFAULT', 'MODBUS_HOST')).spl
 MODBUS_PORT = int(os.getenv('MODBUS_PORT', config.get('DEFAULT', 'MODBUS_PORT', fallback='502')))
 START_STOP_CHARGE_ADDRESS = int(os.getenv('START_CHARGE_ADDRESS', config.get('DEFAULT', 'START_CHARGE_ADDRESS', fallback='5010')))
 
+# Porsche setup
+PORSCHE_EMAIL = os.getenv('PORSCHE_EMAIL', config.get('DEFAULT', 'PORSCHE_EMAIL'))
+PORSCHE_PASSWORD = os.getenv('PORSCHE_PASSWORD', config.get('DEFAULT', 'PORSCHE_PASSWORD'))
+
 modbus_client = ModbusTcpClient(MODBUS_HOST, port=MODBUS_PORT)
 
 # Define API key in PandasClient

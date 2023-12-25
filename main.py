@@ -6,6 +6,7 @@ from config import FILENAME, UPDATE_INTERVAL, START_STOP_CHARGE_ADDRESS, modbus_
 from utils import fetch_new_data, calculate_best_hours, send_modbus_command, send_telegram_notification, start_charging, stop_charging, determine_start_end_time, fetch_and_determine_times
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
+from porsche import get_battery_soc
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -33,6 +34,9 @@ def main():
     scheduler.start()  # Start the scheduler
 
     # Print the scheduled jobs
+    battery_soc = get_battery_soc()
+    print(f"Porsche Car Battery at {battery_soc}%")
+
     print("Scheduled jobs:")
     print(datetime.now())
     for job in scheduler.get_jobs():
