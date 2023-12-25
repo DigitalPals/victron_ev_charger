@@ -2,6 +2,7 @@ import logging
 import xml.etree.ElementTree as ET
 import pandas as pd
 import pytz
+import requests
 from config import CHARGE_HOURS, TIMEZONE, entsoe_client, COUNTRY, FILENAME, UPDATE_INTERVAL, START_STOP_CHARGE_ADDRESS, modbus_client, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM
 from dateutil.parser import parse
 from datetime import datetime, timedelta, timezone
