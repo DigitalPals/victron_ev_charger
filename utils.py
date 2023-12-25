@@ -2,7 +2,9 @@ import logging
 import xml.etree.ElementTree as ET
 import pandas as pd
 import pytz
-from config import CHARGE_HOURS, TIMEZONE, entsoe_client, COUNTRY, FILENAME
+from config import CHARGE_HOURS, TIMEZONE, entsoe_client, COUNTRY, FILENAME, UPDATE_INTERVAL, START_STOP_CHARGE_ADDRESS, modbus_client, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM
+from dateutil.parser import parse
+from datetime import datetime, timedelta, timezone
 
 def calculate_best_hours(xml_data, charge_duration):
     """
@@ -64,3 +66,76 @@ def fetch_new_data():
         f.write(prices_xml)
 
     logging.info('New data fetched and written to file.')
+
+def send_modbus_command(address, value):
+    """
+    This function sends a command to a Modbus address.
+    """
+    modbus_client.write_register(address, value)
+
+def send_telegram_notification(message):
+    """
+    Send a message to a specific Telegram chat.
+
+    Args:
+    message (str): The message to send.
+    """
+
+    if not TELEGRAM:
+        logging.info('Telegram notifications are disabled.')
+        return
+    
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    data = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": message
+    }
+    response = requests.post(url, data=data)
+    return response.json()
+
+def start_charging():
+    send_modbus_command(START_STOP_CHARGE_ADDRESS, 1)
+    send_telegram_notification('Charging started') #send Telegram notification
+
+def stop_charging():
+    send_modbus_command(START_STOP_CHARGE_ADDRESS, 0)
+    send_telegram_notification('Charging ended') #send Telegram notification
+
+def determine_start_end_time():
+    # Read the contents of prices.xml
+    with open(FILENAME, 'r') as file:
+        xml_data = file.read()
+
+    start_time, end_time = calculate_best_hours(xml_data, CHARGE_HOURS)
+
+    # Convert strings to datetime objects
+    start_time = parse(start_time)
+    end_time = parse(end_time)
+
+    # Format start_time and end_time as strings
+    start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S")
+    end_time_str = end_time.strftime("%Y-%m-%d %H:%M:%S")
+
+    # Assuming start_time and end_time are datetime objects
+    start_time_str = start_time.strftime("%H:%M")
+    end_time_str = end_time.strftime("%H:%M")
+
+    # Get the current time
+    now = datetime.now(timezone.utc)
+
+    # Determine if charging starts today or tomorrow
+    if start_time.date() > now.date():
+        start_day = "tomorrow"
+    else:
+        start_day = "today"
+
+    output = f"Charging will start {start_day} at {start_time_str} and stop at {end_time_str}"
+    send_telegram_notification(output) #send Telegram notification
+    print(output)
+
+    return start_time, end_time
+
+def fetch_and_determine_times():
+    fetch_new_data()
+    start_time, end_time = determine_start_end_time()
+    return start_time, end_time

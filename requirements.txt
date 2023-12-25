@@ -2,3 +2,4 @@ entsoe-py
 lxml
 pymodbus
 requests
+apscheduler
