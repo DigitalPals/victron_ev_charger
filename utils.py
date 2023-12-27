@@ -136,7 +136,15 @@ def determine_start_end_time():
 
     return start_time, end_time
 
-def fetch_and_determine_times():
+def fetch_and_determine_times(scheduler):
     fetch_new_data()
     start_time, end_time = determine_start_end_time()
+
+    # Reschedule the start_charging and stop_charging jobs
+    for job in scheduler.get_jobs():
+        if job.func == start_charging:
+            job.reschedule(trigger='date', run_date=start_time)
+        elif job.func == stop_charging:
+            job.reschedule(trigger='date', run_date=end_time)
+
     return start_time, end_time
