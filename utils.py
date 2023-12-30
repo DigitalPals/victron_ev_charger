@@ -21,7 +21,7 @@ def calculate_best_hours(xml_data, charge_duration):
     times_prices = [(row.find('index').text, float(row.find('price').text)) for row in root.findall('row')]
 
     # Calculate the total price for each possible charge period
-    total_prices = [sum(price for time, price in times_prices[i:i+charge_duration]) for i in range(len(times_prices) - charge_duration + 1)]
+    total_prices = [sum(price for time, price in times_prices[i:i+charge_duration+1]) for i in range(len(times_prices) - charge_duration)]
 
     # Find the start time of the charge period with the lowest total price
     min_price_index = total_prices.index(min(total_prices))
@@ -29,7 +29,7 @@ def calculate_best_hours(xml_data, charge_duration):
 
     # Calculate the end time
     if min_price_index + charge_duration < len(times_prices):
-        end_time = times_prices[min_price_index + charge_duration - 1][0]  # Subtract 1 to account for 0-based indexing
+        end_time = times_prices[min_price_index + charge_duration][0]
     else:
         # If the end time is out of range, set it to the last time in the list
         end_time = times_prices[-1][0]
