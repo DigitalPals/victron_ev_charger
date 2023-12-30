@@ -48,9 +48,19 @@ def fetch_new_data():
     """
     logging.info('Fetching new data.')
     
-    current_datetime, tomorrow_datetime = get_current_and_tomorrow_datetime()
+    # Get the current date and time
+    now = datetime.now()
 
-    # Query day ahead prices for a specific country, e.g., Netherlands
+    # Set current_datetime to the current time
+    current_datetime = now
+
+    # Set tomorrow_datetime to the end of tomorrow
+    tomorrow_datetime = (now + timedelta(days=1)).replace(hour=23, minute=59, second=59)
+
+    # Convert the datetime objects to timezone-aware pandas Timestamp objects
+    current_datetime = pd.Timestamp(current_datetime).tz_localize('UTC')
+    tomorrow_datetime = pd.Timestamp(tomorrow_datetime).tz_localize('UTC')
+
     prices = entsoe_client.query_day_ahead_prices(COUNTRY, start=current_datetime, end=tomorrow_datetime)
 
     # Convert the Series to a DataFrame
