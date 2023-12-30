@@ -29,7 +29,7 @@ def calculate_best_hours(xml_data, charge_duration):
 
     # Calculate the end time
     if min_price_index + charge_duration < len(times_prices):
-        end_time = times_prices[min_price_index + charge_duration][0]
+        end_time = times_prices[min_price_index + charge_duration - 1][0]  # Subtract 1 to account for 0-based indexing
     else:
         # If the end time is out of range, set it to the last time in the list
         end_time = times_prices[-1][0]
