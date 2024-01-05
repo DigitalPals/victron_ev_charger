@@ -156,11 +156,13 @@ def fetch_and_determine_times(scheduler):
     fetch_new_data()
     start_time, end_time = determine_start_end_time()
 
-    # Reschedule the start_charging and stop_charging jobs
+    # Remove existing start_charging and stop_charging jobs
     for job in scheduler.get_jobs():
-        if job.func == start_charging:
-            job.reschedule(trigger='date', run_date=start_time)
-        elif job.func == stop_charging:
-            job.reschedule(trigger='date', run_date=end_time)
+        if job.func == start_charging or job.func == stop_charging:
+            job.remove()
+
+    # Schedule the start_charging and stop_charging jobs
+    scheduler.add_job(start_charging, 'cron', hour=start_time.hour, minute=start_time.minute + 5)
+    scheduler.add_job(stop_charging, 'cron', hour=end_time.hour, minute=end_time.minute + 5)
 
     return start_time, end_time
