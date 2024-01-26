@@ -13,7 +13,7 @@ def calculate_best_hours(xml_data, charge_duration):
     It returns the start and end times of the best charge period.
     """
     logging.info('Calculating best time to charge car.')
-    
+
     # Parse the XML data
     root = ET.fromstring(xml_data)
 
