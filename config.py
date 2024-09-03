@@ -5,8 +5,8 @@ from entsoe import EntsoePandasClient
 
 config = configparser.ConfigParser()
 
-if os.path.exists('private.ini'):
-    config.read('private.ini')
+if os.path.exists(os.path.expanduser('~/.config/private.ini')):
+    config.read(os.path.expanduser('~/.config/private.ini'))
 else:
     config.read('config.ini')
 
@@ -25,7 +25,7 @@ FETCH_RECALCULATE_TIME = (hour, minute)
 # Telegram setup
 TELEGRAM_BOT_TOKEN = config.get('DEFAULT', 'TELEGRAM_BOT_TOKEN').split('#')[0].strip()
 TELEGRAM_CHAT_ID = config.get('DEFAULT', 'TELEGRAM_CHAT_ID').split('#')[0].strip()
-TELEGRAM = config.get('DEFAULT', 'TELEGRAM').lower() == 'true'.split('#')[0].strip()
+TELEGRAM = config.get('DEFAULT', 'TELEGRAM').lower().strip() == 'true'
 
 # Modbus setup
 MODBUS_HOST = config.get('DEFAULT', 'MODBUS_HOST').split('#')[0].strip()

@@ -101,14 +101,18 @@ def send_telegram_notification(message):
     if not TELEGRAM:
         logging.info('Telegram notifications are disabled.')
         return
-    
+
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     data = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message
     }
-    response = requests.post(url, data=data)
-    return response.json()
+    try:
+        response = requests.post(url, data=data)
+        response.raise_for_status()
+        logging.info('Telegram notification sent successfully.')
+    except requests.RequestException as e:
+        logging.error(f'Failed to send Telegram notification: {e}')
 
 def start_charging():
     send_modbus_command(START_STOP_CHARGE_ADDRESS, 1)
@@ -126,27 +130,23 @@ def determine_start_end_time():
     start_time, end_time = calculate_best_hours(xml_data, CHARGE_HOURS)
 
     # Convert strings to datetime objects
-    start_time = parse(start_time)
-    end_time = parse(end_time)
+    start_time = parse(start_time).replace(tzinfo=pytz.timezone(TIMEZONE))
+    end_time = parse(end_time).replace(tzinfo=pytz.timezone(TIMEZONE))
 
-    # Format start_time and end_time as strings
-    start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S")
-    end_time_str = end_time.strftime("%Y-%m-%d %H:%M:%S")
-
-    # Assuming start_time and end_time are datetime objects
+    # Format start_time and end_time as strings for display (only time)
     start_time_str = start_time.strftime("%H:%M")
     end_time_str = end_time.strftime("%H:%M")
 
     # Get the current time
-    now = datetime.now(timezone.utc)
+    now = datetime.now(pytz.timezone(TIMEZONE))
 
     # Determine if charging starts today or tomorrow
     if start_time.date() > now.date():
-        start_day = "tomorrow"
+        start_day = "morgen"
     else:
-        start_day = "today"
+        start_day = "vandaag"
 
-    output = f"Charging will start {start_day} at {start_time_str} and stop at {end_time_str}"
+    output = f"Opladen start {start_day} om {start_time_str} en stopt om {end_time_str}"
     send_telegram_notification(output) #send Telegram notification
     print(output)
 

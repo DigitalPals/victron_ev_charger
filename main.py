@@ -29,7 +29,7 @@ def main():
     scheduler = BackgroundScheduler()
     scheduler.add_job(start_charging, 'date', run_date=start_time)  # Schedule the start_charging job
     scheduler.add_job(stop_charging, 'date', run_date=end_time)  # Schedule the stop_charging job
-    scheduler.add_job(fetch_and_determine_times, 'cron', args=[scheduler], hour=FETCH_RECALCULATE_TIME[0], minute=FETCH_RECALCULATE_TIME[1])  # Schedule the fetch_and_determine_times job to run at 14:15 every day
+    scheduler.add_job(fetch_and_determine_times, 'cron', args=[scheduler], hour=FETCH_RECALCULATE_TIME[0], minute=FETCH_RECALCULATE_TIME[1])  # Schedule the fetch_and_determine_times job to run at specified time every day
     scheduler.start()  # Start the scheduler
 
     print("Scheduled jobs:")
